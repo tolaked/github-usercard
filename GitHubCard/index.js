@@ -2,6 +2,7 @@
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
 */
+// const data = axios.get("https://api.github.com/users/tolaked");
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
@@ -24,8 +25,7 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
-
+// followersArray.forEach(element => element);
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -43,8 +43,84 @@ const followersArray = [];
     <p>Bio: {users bio}</p>
   </div>
 </div>
-
 */
+
+axios
+  .get(`https://api.github.com/users/tolaked`)
+  .then(response => {
+    // Remember response is an object, response.data is an array.
+    let page = createComponent(response.data);
+    container.appendChild(page);
+  })
+  .catch(error => {
+    console.log("Error:", error);
+  });
+
+function createComponent(obj) {
+  let newDiv = document.createElement("div");
+  newDiv.classList.add("card");
+  let profileImage = document.createElement("img");
+  profileImage.setAttribute("src", obj.avatar_url);
+  let secondDiv = document.createElement("div");
+  secondDiv.classList.add("card-info");
+  let heading = document.createElement("h3");
+  heading.classList.add("name");
+  heading.textContent = obj.name;
+  let paragraph = document.createElement("p");
+  paragraph.classList.add("username");
+  paragraph.textContent = obj.login;
+  let paragraph2 = document.createElement("p");
+  paragraph2.textContent = `Location: ${obj.location}`;
+  let profile = document.createElement("p");
+  profile.textContent = "Profile";
+  let link = document.createElement("a");
+  link.setAttribute("href", obj.html_url);
+  link.textContent = obj.html_url;
+  profile.appendChild(link);
+  let followers = document.createElement("p");
+  followers.textContent = `Followers: ${obj.followers}`;
+  let Following = document.createElement("p");
+  Following.textContent = `Followers: ${obj.following}`;
+  let Bio = document.createElement("p");
+  Bio.textContent = `Bio: ${obj.bio}`;
+
+  let allElements = [
+    heading,
+    paragraph,
+    paragraph2,
+    profile,
+    link,
+    followers,
+    Following,
+    Bio
+  ];
+
+  allElements.map(element => secondDiv.appendChild(element));
+  newDiv.appendChild(profileImage);
+  newDiv.appendChild(secondDiv);
+
+  return newDiv;
+}
+const container = document.querySelector(".cards");
+
+const followersArray = [
+  "beejay1293",
+  "abidex4yemi",
+  "mikeattara",
+  "tobslob",
+  "surifoll"
+];
+
+function followersData(username) {
+  return axios.get(`https://api.github.com/users/${username}`);
+}
+
+followersArray.forEach(element => {
+  followersData(element).then(res => {
+    const card = createComponent(res.data);
+    container.appendChild(card);
+  });
+});
 
 /* List of LS Instructors Github username's: 
   tetondan
